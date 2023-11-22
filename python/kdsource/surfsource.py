@@ -864,6 +864,8 @@ class SurfaceSourceFile:
         vmin=None,
         vmax=None,
         peak_brilliance=False,
+        plot_difference = False,
+        Difference_to = None,
         **kwargs
     ):
         """Plot 1-D or 2-D distribution for given variables
@@ -918,20 +920,32 @@ class SurfaceSourceFile:
             When the realive error is greater or equal than the tolerance,
             the mean values of the distribution are not shown.
             Default: 1.0
+        Difference_to: Surfsourcefile to be compared.
+            The distribution to compared.*100s
         **kwargs
             Extra arguments that will be passed to matplotlib
             (label, color, and so on)
-
+            
         Returns
         -------
         matplotlib 1-D or 2-D plot for the required variables with the proper
         normalization.
         """
+        
         xscale, yscale = scales
         scales = [scales[i] for i in range(0, len(bins))]
+        
         df, bins, pinfo = self.get_distribution(
             vars, bins, scales, factor, filters, norm_vars, convolution
         )
+        
+        if plot_difference:
+            df['mean'] =(1 - Difference_to.get_distribution(
+                vars, bins, scales, factor, filters, norm_vars, convolution
+            )[0]['mean']/df['mean'])
+            df['mean'] = np.abs(df['mean']*100)
+            ylabel = 'ERROR[%]'
+            zlabel = 'ERROR[%]'
         if peak_brilliance and len(vars) == 2:
             df = df.groupby([var for var in vars if var != "t"]
                             ).max().reset_index()
@@ -966,12 +980,15 @@ class SurfaceSourceFile:
                 )
             plt.xscale(xscale)
             plt.yscale(yscale)
+            plt.ylim(vmin,vmax)
+            plt.show()         
             if XUNITS[vars[0]] != "":
                 plt.xlabel(r"${:s}$ [{:s}]".format(
                     XLATEX[vars[0]], XUNITS[vars[0]]))
             else:
                 plt.xlabel(r"${:s}$".format(XLATEX[vars[0]]))
             plt.ylabel(r"{:s}".format(Jlabel))
+            
 
         elif len(bins) == 2:
             Jbrill = "Intensity" if zlabel is None else zlabel
@@ -1101,6 +1118,35 @@ class SurfaceSourceFile:
         """
         create_source_file(self._df2.copy(), filepath, **kwargs)
 
+    def get_current(self):
+        """Weight summ over particle list.
+        
+        Returns
+        ----------
+        current: float.
+        
+        """
+        return np.sum(self._df['wgt'])
+    
+    def Source_factor(self, Surface, update = False):
+        """Calculates the source factor corresponding to equating currents between "Surface" and this.
+        
+        Parameters
+        ----------
+        Surface: SourfaceSourceFile 
+            Particle list to compare currents.
+        update: bool
+            Variable to choose if you want to update the new Source Factor
+        
+        Returns
+        ----------
+        Source factor in units of "n/s"
+        
+        """
+        S = Surface.get_current()*Surface._S0/self.get_current()
+        if update == True:
+            self._S0 = S
+        return S
 
 def create_source_file(df, filepath, **kwargs):
     """Generate a source file from a Pandas DataFrame.
