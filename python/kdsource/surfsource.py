@@ -3,7 +3,7 @@ import subprocess
 from enum import Enum
 from math import cos, pi, sin
 
-from astropy.stats import knuth_bin_width
+# from astropy.stats import knuth_bin_width
 
 import h5py
 
@@ -723,25 +723,25 @@ class SurfaceSourceFile:
         for i, (bin, var, scale) in enumerate(zip(bins, vars, scales)):
             # If bins is int, create a mesh from var-min to var-max
             if type(bin) is int:
-                if bin == 0:
-                    if scale == "log":
-                        bins[i] = knuth_bin_width(
-                            np.log10(df[var].to_numpy()), return_bins=True
-                        )[1]
-                        bins[i] = 10 ** bins[i]
-                    else:
-                        bins[i] = knuth_bin_width(df[var].to_numpy(),
-                                                  return_bins=True)[1]
+                # if bin == 0:
+                #     if scale == "log":
+                #         bins[i] = knuth_bin_width(
+                #             np.log10(df[var].to_numpy()), return_bins=True
+                #         )[1]
+                #         bins[i] = 10 ** bins[i]
+                #     else:
+                #         bins[i] = knuth_bin_width(df[var].to_numpy(),
+                #                                   return_bins=True)[1]
 
+                # else:
+                if scale == "log":
+                    bins[i] = np.logspace(
+                        np.log10(df[var].min()), np.log10(
+                            df[var].max()), bin
+                    )
                 else:
-                    if scale == "log":
-                        bins[i] = np.logspace(
-                            np.log10(df[var].min()), np.log10(
-                                df[var].max()), bin
-                        )
-                    else:
-                        bins[i] = np.linspace(
-                            df[var].min(), df[var].max(), bin)
+                    bins[i] = np.linspace(
+                        df[var].min(), df[var].max(), bin)
             else:
                 # If var is angle, convert degrees to radians
                 if var == "psi" or var == "phi" or var == "theta":
@@ -946,6 +946,7 @@ class SurfaceSourceFile:
             df['mean'] = np.abs(df['mean']*100)
             ylabel = 'ERROR[%]'
             zlabel = 'ERROR[%]'
+            
         if peak_brilliance and len(vars) == 2:
             df = df.groupby([var for var in vars if var != "t"]
                             ).max().reset_index()
@@ -981,7 +982,7 @@ class SurfaceSourceFile:
             plt.xscale(xscale)
             plt.yscale(yscale)
             plt.ylim(vmin,vmax)
-            plt.show()         
+            # plt.show()         
             if XUNITS[vars[0]] != "":
                 plt.xlabel(r"${:s}$ [{:s}]".format(
                     XLATEX[vars[0]], XUNITS[vars[0]]))
@@ -1126,7 +1127,7 @@ class SurfaceSourceFile:
         current: float.
         
         """
-        return np.sum(self._df['wgt'])
+        return (self.get_distribution(vars=['E'],bins=[2],total=True)[0]).nominal_value
     
     def Source_factor(self, Surface, update = False):
         """Calculates the source factor corresponding to equating currents between "Surface" and this.
@@ -1143,10 +1144,10 @@ class SurfaceSourceFile:
         Source factor in units of "n/s"
         
         """
-        S = Surface.get_current()*Surface._S0/self.get_current()
+        S = Surface.get_current()/self.get_current()
         if update == True:
-            self._S0 = S
-        return S
+            self._S0 *= S
+        return self._S0
 
 def create_source_file(df, filepath, **kwargs):
     """Generate a source file from a Pandas DataFrame.
