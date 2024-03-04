@@ -91,6 +91,12 @@ int PList_next(PList* plist, int loop){
 	return 1;
 }
 
+void PList_offset(PList* plist, uint64_t offset)
+{
+	mcpl_skipforward(plist->file, offset);
+	PList_next(plist,1);
+}
+
 void PList_destroy(PList* plist){
 	free(plist->filename);
 	mcpl_close_file(plist->file);
