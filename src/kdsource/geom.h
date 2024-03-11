@@ -40,6 +40,7 @@ typedef struct Geometry{
 	FILE* bwfile;     // Bandwidth file
 	double bw;        // Normalized bandwidth
 	char kernel;	  // Kernel
+	uint64_t* seed;		//posible seed to resample.
 
 	double* trasl;    // Geometry translation
 	double* rot;      // Geometry rotation

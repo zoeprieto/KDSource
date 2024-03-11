@@ -180,6 +180,8 @@ KDSource* KDS_open(const char* xmlfilename){
 
 int KDS_sample2(KDSource* kds, mcpl_particle_t* part, int perturb, double w_crit, WeightFun bias, int loop){
 	int ret=0;
+	if(kds->geom->seed != NULL)
+		srand(*(kds->geom->seed));
 	if(w_crit <= 0){
 		PList_get(kds->plist, part);
 		if(perturb) Geom_perturb(kds->geom, part);

@@ -51,6 +51,7 @@ Geometry* Geom_create(int ord, Metric** metrics, double bw, const char* bwfilena
 	geom->bwfilename = NULL;
 	geom->bwfile = NULL;
 	geom->kernel = kernel;
+	geom->seed = NULL;
 	if(bwfilename) if(strlen(bwfilename)){
 		FILE* bwfile;
 		if((bwfile=fopen(bwfilename, "rb")) == 0){
@@ -106,6 +107,8 @@ int Geom_perturb(const Geometry* geom, mcpl_particle_t* part){
 	int i, ret=0;
 	if(geom->trasl) traslv(part->position, geom->trasl, 1);
 	if(geom->rot){ rotv(part->position, geom->rot, 1); rotv(part->direction, geom->rot, 1); }
+	// if (geom->seed != NULL)
+	// 	srand(*(geom->seed));
 	for(i=0; i<geom->ord; i++)
 		ret += geom->ms[i]->perturb(geom->ms[i], part, geom->bw, geom->kernel);
 	if(geom->rot){ rotv(part->position, geom->rot, 0); rotv(part->direction, geom->rot, 0); }
@@ -146,8 +149,19 @@ int E_perturb(const Metric* metric, mcpl_particle_t* part, double bw, char kerne
 	if(part->ekin < 0) part->ekin *= -1;
 	return 0;
 }
+// int Let_perturb(const Metric* metric, mcpl_particle_t* part, double bw, char kernel){
+// 	part->ekin *= exp(bw*metric->scaling[0] * rand_type(kernel));
+// 	return 0;
+// }
+
 int Let_perturb(const Metric* metric, mcpl_particle_t* part, double bw, char kernel){
-	part->ekin *= exp(bw*metric->scaling[0] * rand_type(kernel));
+	float E = part->ekin;
+	E *= exp(bw*metric->scaling[0] * rand_type(kernel));
+	while(E > metric->params[0]){
+		E = part->ekin;
+		E *= exp(bw*metric->scaling[0] * rand_type(kernel));
+	}
+	part->ekin = E;
 	return 0;
 }
 
