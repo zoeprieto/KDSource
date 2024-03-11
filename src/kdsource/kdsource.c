@@ -8,6 +8,7 @@
 #include "kdsource.h"
 
 
+
 void KDS_error(const char* msg){
 	printf("KDSource error: %s\n", msg);
 	exit(EXIT_FAILURE);
@@ -23,6 +24,7 @@ KDSource* KDS_create(double J, char kernel, PList* plist, Geometry* geom){
 	kds->kernel = kernel;
 	kds->plist = plist;
 	kds->geom = geom;
+	MT = MT64_create(NULL);
 	return kds;
 }
 
@@ -43,7 +45,7 @@ KDSource* KDS_open(const char* xmlfilename){
 	int switch_x2z, variable_bw;
 	char* bwfilename=NULL;
 	double bw=0;
-
+	printf("Holaaaaaaaaaaaaaaaa");	
 	// Read file
 	printf("Reading xmlfile %s...\n", xmlfilename);
 	xmlDocPtr doc = xmlReadFile(xmlfilename, NULL, 0);
@@ -51,6 +53,7 @@ KDSource* KDS_open(const char* xmlfilename){
 		printf("Could not open file %s\n", xmlfilename);
 		KDS_error("Error in KDS_open");
 	}
+	printf("Holaaaaaaaaaaaaaaaa");	
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(strcmp((char*)root->name, "KDSource") != 0){
 		printf("Invalid format in source XML file %s\n", xmlfilename);
@@ -163,7 +166,9 @@ KDSource* KDS_open(const char* xmlfilename){
 	for(i=0; i<order; i++) metrics[i] = Metric_create(dims[i], scalings[i], perturbs[i], nps[i], params[i]);
 	Geometry* geom = Geom_create(order, metrics, bw, bwfilename, kernel, trasl_geom, rot_geom);
 	// Create KDSource
+	printf("Holaaaaaaaaaaaaaaaa");	
 	KDSource* s = KDS_create(J, kernel, plist, geom);
+	printf("Holaaaaaaaaaaaaaaaa");
 
 	printf("Done.\n");
 
@@ -181,7 +186,7 @@ KDSource* KDS_open(const char* xmlfilename){
 int KDS_sample2(KDSource* kds, mcpl_particle_t* part, int perturb, double w_crit, WeightFun bias, int loop){
 	int ret=0;
 	if(kds->geom->seed != NULL)
-		srand(*(kds->geom->seed));
+		initializeMersenneTwister64(MT,kds->geom->seed);
 	if(w_crit <= 0){
 		PList_get(kds->plist, part);
 		if(perturb) Geom_perturb(kds->geom, part);
@@ -243,7 +248,9 @@ double KDS_w_mean(KDSource* kds, int N, WeightFun bias){
 void KDS_destroy(KDSource* kds){
 	PList_destroy(kds->plist);
 	Geom_destroy(kds->geom);
+	MT64_destroy(MT);
 	free(kds);
+	
 }
 
 

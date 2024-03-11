@@ -1,22 +1,26 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <MersenneTwister.h>
+#include<stdio.h>
+#include<stdint.h>
+#include<kdsource.h>
 
 MersenneTwister64* MT64_create(uint64_t *seed){
-    MersenneTwister64* MT = (MersenneTwister64*)malloc(sizeof(MersenneTwister64));
-    initializeMersenneTwister64(MT,seed);
+    MersenneTwister64* MT_ = (MersenneTwister64*)malloc(sizeof(MersenneTwister64));
+    initializeMersenneTwister64(MT_,seed);
+    return MT_;
 }
 
 
-void initializeMersenneTwister64(MersenneTwister64 *MT, uint64_t *seed) {
-    MT->state[0] = seed;
+void initializeMersenneTwister64(MersenneTwister64 *MT_, uint64_t *seed) {
+    if(seed = NULL)
+        MT_->state[0] = 0;
+    else
+        MT_->state[0] = *seed;
     for (int i = 1; i < MT_N; ++i) {
-        MT->state[i] = (6364136223846793005ULL * (MT->state[i - 1] ^ (MT->state[i - 1] >> 62)) + i);
+        MT_->state[i] = (6364136223846793005ULL * (MT_->state[i - 1] ^ (MT_->state[i - 1] >> 62)) + i);
     }
-    MT->index = MT_N;
+    MT_->index = MT_N;
 }
 
-uint64_t MT64_rand(MersenneTwister64 *MT) {
+uint64_t MT64_rand() {
     if (MT->index == MT_N) {
         int i;
         for (i = 0; i < MT_N - MT_M; ++i) {
@@ -39,5 +43,9 @@ uint64_t MT64_rand(MersenneTwister64 *MT) {
     y ^= (y >> 43);
 
     return y;
+}
+
+void MT64_destroy(MersenneTwister64 *MT){
+    free(MT);
 }
 
