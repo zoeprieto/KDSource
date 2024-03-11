@@ -13,8 +13,11 @@ MersenneTwister64* MT64_create(uint64_t* seed){
 void initializeMersenneTwister64(MersenneTwister64* MT_, uint64_t* seed) {
     if(seed == NULL)
         MT_->state[0] = 0;
-    else
+    else{
         MT_->state[0] = *seed;
+        printf("seed = %ld\n",*seed);
+    }
+
     for (int i = 1; i < MT_N; ++i) {
         MT_->state[i] = (6364136223846793005ULL * (MT_->state[i - 1] ^ (MT_->state[i - 1] >> 62)) + i);
     }
