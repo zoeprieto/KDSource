@@ -7,7 +7,8 @@
 
 #include "kdsource.h"
 
-
+// MersenneTwister64* MT = MT64_create(NULL);
+MersenneTwister64* MT = NULL;
 
 void KDS_error(const char* msg){
 	printf("KDSource error: %s\n", msg);
@@ -18,12 +19,15 @@ void KDS_end(const char* msg){
 	exit(EXIT_SUCCESS);
 }
 
+
 KDSource* KDS_create(double J, char kernel, PList* plist, Geometry* geom){
 	KDSource* kds = (KDSource*)malloc(sizeof(KDSource));
 	kds->J = J;
 	kds->kernel = kernel;
 	kds->plist = plist;
 	kds->geom = geom;
+
+	// MT = (MersenneTwister64*)malloc(sizeof(MersenneTwister64));
 	MT = MT64_create(NULL);
 	return kds;
 }
@@ -45,7 +49,6 @@ KDSource* KDS_open(const char* xmlfilename){
 	int switch_x2z, variable_bw;
 	char* bwfilename=NULL;
 	double bw=0;
-	printf("Holaaaaaaaaaaaaaaaa");	
 	// Read file
 	printf("Reading xmlfile %s...\n", xmlfilename);
 	xmlDocPtr doc = xmlReadFile(xmlfilename, NULL, 0);
@@ -53,7 +56,6 @@ KDSource* KDS_open(const char* xmlfilename){
 		printf("Could not open file %s\n", xmlfilename);
 		KDS_error("Error in KDS_open");
 	}
-	printf("Holaaaaaaaaaaaaaaaa");	
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	if(strcmp((char*)root->name, "KDSource") != 0){
 		printf("Invalid format in source XML file %s\n", xmlfilename);
@@ -166,9 +168,7 @@ KDSource* KDS_open(const char* xmlfilename){
 	for(i=0; i<order; i++) metrics[i] = Metric_create(dims[i], scalings[i], perturbs[i], nps[i], params[i]);
 	Geometry* geom = Geom_create(order, metrics, bw, bwfilename, kernel, trasl_geom, rot_geom);
 	// Create KDSource
-	printf("Holaaaaaaaaaaaaaaaa");	
 	KDSource* s = KDS_create(J, kernel, plist, geom);
-	printf("Holaaaaaaaaaaaaaaaa");
 
 	printf("Done.\n");
 

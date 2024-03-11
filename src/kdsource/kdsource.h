@@ -32,7 +32,7 @@
 #define MAX_RESAMPLES 1000000
 #define NAME_MAX_LEN 256
 
-static MersenneTwister64* MT;
+extern MersenneTwister64* MT;
 
 typedef double (*WeightFun)(const mcpl_particle_t* part);
 

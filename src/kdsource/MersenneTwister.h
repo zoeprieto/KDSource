@@ -14,7 +14,7 @@ typedef struct {
     int index;
 } MersenneTwister64;
 
-MersenneTwister64* MT64_create(uint64_t *seed);
-void initializeMersenneTwister64(MersenneTwister64 *MT_, uint64_t *seed);
+MersenneTwister64* MT64_create(uint64_t* seed);
+void initializeMersenneTwister64(MersenneTwister64* MT_, uint64_t* seed);
 uint64_t MT64_rand();
-void MT64_destroy(MersenneTwister64 *MT);
+void MT64_destroy(MersenneTwister64* MT_);

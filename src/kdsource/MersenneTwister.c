@@ -2,15 +2,16 @@
 #include<stdint.h>
 #include<kdsource.h>
 
-MersenneTwister64* MT64_create(uint64_t *seed){
+MersenneTwister64* MT64_create(uint64_t* seed){
     MersenneTwister64* MT_ = (MersenneTwister64*)malloc(sizeof(MersenneTwister64));
+    if(MT_ == NULL){	printf("Error al generar MersenneTwister64");}
     initializeMersenneTwister64(MT_,seed);
     return MT_;
 }
 
 
-void initializeMersenneTwister64(MersenneTwister64 *MT_, uint64_t *seed) {
-    if(seed = NULL)
+void initializeMersenneTwister64(MersenneTwister64* MT_, uint64_t* seed) {
+    if(seed == NULL)
         MT_->state[0] = 0;
     else
         MT_->state[0] = *seed;
@@ -45,7 +46,7 @@ uint64_t MT64_rand() {
     return y;
 }
 
-void MT64_destroy(MersenneTwister64 *MT){
-    free(MT);
+void MT64_destroy(MersenneTwister64* MT_){
+    free(MT_);
 }
 

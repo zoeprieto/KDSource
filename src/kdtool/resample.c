@@ -69,7 +69,6 @@ int main(int argc, char *argv[]){
 
 	mcpl_outfile_t file = mcpl_create_outfile(outfilename);
 	mcpl_hdr_set_srcname(file, "KDSource resample");
-	printf("Holaaaaaaaaaaaaaaaa");
 	double w_crit = KDS_w_mean(kds, 1000, NULL);
 
 	printf("Resampling...\n");
