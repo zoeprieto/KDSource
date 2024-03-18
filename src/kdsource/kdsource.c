@@ -248,7 +248,10 @@ double KDS_w_mean(KDSource* kds, int N, WeightFun bias){
 void KDS_destroy(KDSource* kds){
 	PList_destroy(kds->plist);
 	Geom_destroy(kds->geom);
-	MT64_destroy(MT);
+	if (MT != NULL){
+		MT64_destroy(MT);
+		MT = NULL;
+	}
 	free(kds);
 	
 }
