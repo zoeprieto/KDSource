@@ -255,8 +255,9 @@ class SurfaceSourceFile:
         pulse_shape="rectangular",
     ):
         # Initialize SurfaceSource class atributes
-        self._filepath = filepath
-        self._extension = os.path.splitext(self._filepath)[-1]
+        if filepath is not None:
+            self._filepath = filepath
+            self._extension = os.path.splitext(self._filepath)[-1]
         self._translation = translation
         self._rotation = rotation
         self._domain = domain
@@ -274,9 +275,19 @@ class SurfaceSourceFile:
         self._convoluted = convoluted
         self._shape = pulse_shape
         self._cloned = skip_cloned
-        self._df = self.__read__()
-        self._df2 = self.get_pandas_dataframe()
+        if filepath is not None:
+            self._df = self.__read__()
+            self._df2 = self.get_pandas_dataframe()
         self._brilliance = 1.0
+
+
+    def copy(self,**kwargs):
+        new_sourface_source = SurfaceSourceFile(None,self._S0,self._Np,self._dA,self._translation,self._rotation,self._domain,self._domain_first,self._rotation_first,self._E0,self._convoluted)
+        new_sourface_source._filepath = self._filepath
+        new_sourface_source._extension = self._extension
+        new_sourface_source._df = self._df.copy()
+        new_sourface_source._df2 = self._df2.copy()
+        return new_sourface_source
 
     def __read__(self):
         # OpenMC .h5 format
@@ -1127,7 +1138,7 @@ class SurfaceSourceFile:
         current: float.
         
         """
-        return (self.get_distribution(vars=['E'],bins=[2],total=True)[0]).nominal_value
+        return (self.get_distribution(vars=['E'],bins=[2],total=True)[0]).nominal_value #tengo que poner algo para que no sea con la eneria, ni con niguna variable, que sea con lo que tiene.
     
     def Source_factor(self, Surface, update = False):
         """Calculates the source factor corresponding to equating currents between "Surface" and this.
@@ -1148,7 +1159,38 @@ class SurfaceSourceFile:
         if update == True:
             self._S0 *= S
         return self._S0
+    
+    def Filter_Sourface_Source(self, domain={}):
+        
+        """Generates a source_source object by filtering on a phase space domain
 
+        Parameters
+        ----------
+        domain: dict
+            Range of the variables: var_min <= 'var' < var_max.
+            It must be defined like: {'var':[var_min, var_max]}.
+            List of possible variables:
+            type [PDG],
+            E [MeV], ln(E0/E), lambda [AA],
+            x [cm], y [cm], z [cm], R [cm], theta [rad],
+            u, v, w, phi [rad], psi [rad],
+            t [ms], log(t),
+            wgt.
+            Default: {}
+
+        Returns
+        ----------
+            SourfaceSource Object with the proper source factor.
+        """
+
+        new_sourface_source = self.copy()
+        new_sourface_source._domain = domain
+        new_sourface_source._df2 = new_sourface_source._set_domain(new_sourface_source._df2)
+        new_sourface_source.Source_factor(self, update=True)
+        return new_sourface_source
+
+
+    
 def create_source_file(df, filepath, **kwargs):
     """Generate a source file from a Pandas DataFrame.
     Possible formats: MCPL, HDF5 (OpenMC), SSV (KDSource)
