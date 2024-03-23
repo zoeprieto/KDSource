@@ -7,6 +7,8 @@
 
 #include "kdsource.h"
 
+// MersenneTwister64* MT = MT64_create(NULL);
+MersenneTwister64* MT = NULL;
 
 void KDS_error(const char* msg){
 	printf("KDSource error: %s\n", msg);
@@ -17,12 +19,16 @@ void KDS_end(const char* msg){
 	exit(EXIT_SUCCESS);
 }
 
+
 KDSource* KDS_create(double J, char kernel, PList* plist, Geometry* geom){
 	KDSource* kds = (KDSource*)malloc(sizeof(KDSource));
 	kds->J = J;
 	kds->kernel = kernel;
 	kds->plist = plist;
 	kds->geom = geom;
+
+	// MT = (MersenneTwister64*)malloc(sizeof(MersenneTwister64));
+	MT = MT64_create(NULL);
 	return kds;
 }
 
@@ -43,7 +49,6 @@ KDSource* KDS_open(const char* xmlfilename){
 	int switch_x2z, variable_bw;
 	char* bwfilename=NULL;
 	double bw=0;
-
 	// Read file
 	printf("Reading xmlfile %s...\n", xmlfilename);
 	xmlDocPtr doc = xmlReadFile(xmlfilename, NULL, 0);
@@ -181,7 +186,7 @@ KDSource* KDS_open(const char* xmlfilename){
 int KDS_sample2(KDSource* kds, mcpl_particle_t* part, int perturb, double w_crit, WeightFun bias, int loop){
 	int ret=0;
 	if(kds->geom->seed != NULL)
-		srand(*(kds->geom->seed));
+		initializeMersenneTwister64(MT,kds->geom->seed);
 	if(w_crit <= 0){
 		PList_get(kds->plist, part);
 		if(perturb) Geom_perturb(kds->geom, part);
@@ -243,7 +248,12 @@ double KDS_w_mean(KDSource* kds, int N, WeightFun bias){
 void KDS_destroy(KDSource* kds){
 	PList_destroy(kds->plist);
 	Geom_destroy(kds->geom);
+	if (MT != NULL){
+		MT64_destroy(MT);
+		MT = NULL;
+	}
 	free(kds);
+	
 }
 
 

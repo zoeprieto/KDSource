@@ -94,7 +94,7 @@ int PList_next(PList* plist, int loop){
 void PList_offset(PList* plist, uint64_t offset)
 {
 	mcpl_skipforward(plist->file, offset);
-	PList_next(plist,1);
+	PList_next(plist,1); //Actualize the MCPL particle list iterator to point to the required position
 }
 
 void PList_destroy(PList* plist){
