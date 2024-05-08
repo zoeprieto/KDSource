@@ -202,7 +202,7 @@ int KDS_sample2(KDSource* kds, mcpl_particle_t* part, int perturb, double w_crit
 			else bs = 1;
 			if(part->weight*bs > w_crit){ // If w*bs>w_crit, use w_crit/w*bs as prob of going forward in list
 				if(perturb) Geom_perturb(kds->geom, part);
-				if(rand() < w_crit/(part->weight*bs)*RAND_MAX){
+				if(MT64_rand() < w_crit/(part->weight*bs)*MT64_MAX){
 					ret += PList_next(kds->plist, loop);
 					ret += Geom_next(kds->geom, loop);
 				}
@@ -210,7 +210,7 @@ int KDS_sample2(KDSource* kds, mcpl_particle_t* part, int perturb, double w_crit
 			}
 			else{ // If w*bs<w_crit, use w*bs/w_crit as prob of taking particle
 				int take = 0;
-				if(rand() < (part->weight*bs)/w_crit*RAND_MAX){
+				if(MT64_rand() < (part->weight*bs)/w_crit*MT64_MAX){
 					take = 1;
 					if(perturb) Geom_perturb(kds->geom, part);
 				}
@@ -283,7 +283,7 @@ MultiSource* MS_open(int len, const char** xmlfilenames, const double* ws){
 }
 
 int MS_sample2(MultiSource* ms, mcpl_particle_t* part, int perturb, double w_crit, WeightFun bias, int loop){
-	double y = rand() / ((double)RAND_MAX+1);
+	double y = MT64_rand() / ((double)MT64_MAX+1);
 	int i, ret;
 	if(ms->cdf[ms->len-1] <= 0) i = (int)(y*ms->len);
 	else for(i=0; y*ms->cdf[ms->len-1]>ms->cdf[i]; i++);

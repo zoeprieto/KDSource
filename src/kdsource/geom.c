@@ -355,7 +355,7 @@ int Guide_perturb(const Metric* metric, mcpl_particle_t* part, double bw, char k
 			}
 			break;
 	}
-	if(isinf(metric->scaling[2])) mu = -1 + 2.*rand()/RAND_MAX;
+	if(isinf(metric->scaling[2])) mu = -1 + 2.*MT64_rand()/MT64_MAX;
 	else{
 		mu2 = mu + bw*metric->scaling[2] * rand_type(kernel);
 		if(mu >= 0){
@@ -372,7 +372,7 @@ int Guide_perturb(const Metric* metric, mcpl_particle_t* part, double bw, char k
 		}
 		mu = mu2;
 	}
-	if(isinf(metric->scaling[3])) phi = 2.*M_PI*rand()/RAND_MAX;
+	if(isinf(metric->scaling[3])) phi = 2.*M_PI*MT64_rand()/MT64_MAX;
 	else phi += bw*metric->scaling[3]*M_PI/180 * rand_type(kernel);
 	// Antitransform from (z,t,theta_n,theta_t) to (x,y,z,dx,dy,dz)
 	switch(mirror){
@@ -404,10 +404,10 @@ int Guide_perturb(const Metric* metric, mcpl_particle_t* part, double bw, char k
 }
 
 void _vMF_perturb(double bw, double* dx, double* dy, double* dz){
-	double xi = (double)rand()/RAND_MAX;
+	double xi = (double)MT64_rand()/MT64_MAX;
 	double w = 1;
 	w += bw*bw * log(xi+(1-xi)*exp(-2/(bw*bw)));
-	double phi = 2.*M_PI*rand()/RAND_MAX;
+	double phi = 2.*M_PI*MT64_rand()/MT64_MAX;
 	double uv = sqrt(1-w*w), u = uv*cos(phi), v = uv*sin(phi);
 	double dx0=*dx, dy0=*dy, dz0=*dz;
 	if(dz0 > 0){
@@ -423,9 +423,9 @@ void _vMF_perturb(double bw, double* dx, double* dy, double* dz){
 
 int Isotrop_perturb(const Metric* metric, mcpl_particle_t* part, double bw, char kernel){
 	if(isinf(bw*metric->scaling[0])){ // Generate isotropic direction
-		part->direction[2] = -1 + 2.*rand()/RAND_MAX;
+		part->direction[2] = -1 + 2.*MT64_rand()/MT64_MAX;
 		double dxy = sqrt(1-part->direction[2]*part->direction[2]);
-		double phi = 2.*M_PI*rand()/RAND_MAX;
+		double phi = 2.*M_PI*MT64_rand()/MT64_MAX;
 		part->direction[0] = dxy*cos(phi);
 		part->direction[1] = dxy*sin(phi);
 	}

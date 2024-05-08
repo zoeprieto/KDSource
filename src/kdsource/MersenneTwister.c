@@ -15,7 +15,6 @@ void initializeMersenneTwister64(MersenneTwister64* MT_, uint64_t* seed) {
         MT_->state[0] = 0;
     else{
         MT_->state[0] = *seed;
-        printf("seed = %ld\n",*seed);
     }
 
     for (int i = 1; i < MT_N; ++i) {
@@ -45,7 +44,6 @@ uint64_t MT64_rand() {
     y ^= (y << 17) & 0x71D67FFFEDA60000ULL;
     y ^= (y << 37) & 0xFFF7EEE000000000ULL;
     y ^= (y >> 43);
-
     return y;
 }
 
