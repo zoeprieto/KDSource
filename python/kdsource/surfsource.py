@@ -307,7 +307,10 @@ class SurfaceSourceFile:
                 df["v"] = fh["source_bank"]["u"]["y"]
                 df["w"] = fh["source_bank"]["u"]["z"]
                 df["wgt"] = fh["source_bank"]["wgt"]
-                df["t"] = fh["source_bank"]["time"] * 1e3  # s to ms
+                try: 
+                    df["t"] = fh["source_bank"]["time"] * 1e3  # s to ms
+                except:
+                    df["t"] = 0.5
                 df["px"] = 0.0
                 df["py"] = 0.0
                 df["pz"] = 0.0
@@ -430,7 +433,10 @@ class SurfaceSourceFile:
         df["psi"] = np.arccos(df[W].to_numpy())
         df["phi"] = np.arctan2(df[V].to_numpy(), df[U].to_numpy())
         df["ln(E0/E)"] = np.log(self._E0 / df["E"].to_numpy())
-        df["log(t)"] = np.log10(df["t"].to_numpy())
+        try:
+            df["log(t)"] = np.log10(df["t"].to_numpy())
+        except:
+            print("no time")
         # df['lambda'] = 72.3 / 252.8 * (df['E'] * 1e6)**-0.5
         df["lambda"] = wavelength(df["type"].to_numpy(), df["E"].to_numpy())
         # Check domain
