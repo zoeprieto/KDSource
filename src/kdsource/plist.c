@@ -91,22 +91,22 @@ int PList_next(PList* plist, int loop){
 	return 1;
 }
 
-void Plist_reset(PList* plist, uint64_t poss)
+void PList_seek(PList* plist, uint64_t poss)
 {
-	mcpl_rewind(plist->file);
-	PList_offset(plist,poss);
+	mcpl_seek(plist->file, poss);
+	PList_next(plist,1);
 }
-
 
 void PList_offset(PList* plist, uint64_t offset)
 {
-	mcpl_skipforward(plist->file, offset);
-	PList_next(plist,1); //Actualize the MCPL particle list iterator to point to the required position
+	mcpl_skipforward(plist->file, offset-1);
+	PList_next(plist,1);
 }
 
 uint64_t Plist_current(PList* plist) {
     return mcpl_currentposition(plist->file);
 }
+
 
 void PList_destroy(PList* plist){
 	free(plist->filename);

@@ -134,6 +134,17 @@ int Geom_next(Geometry* geom, int loop){
 	return 0;
 }
 
+
+void Geom_seek(Geometry* geom, uint64_t poss)
+{
+	int error = 0;
+	if (geom->bwfile)
+		error = fseek(geom->bwfile, poss * sizeof(float), SEEK_SET) != 0;
+	if (error)
+		KDS_error("Error seeking bandwidth file.");
+	Geom_next(geom,1);
+}
+
 void Geom_destroy(Geometry* geom){
 	int i;
 	for(i=0; i<geom->ord; i++) Metric_destroy(geom->ms[i]);
