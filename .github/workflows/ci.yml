@@ -84,7 +84,7 @@ jobs:
           cd ..
           mkdir build
           cd build
-          cmake .. -DCMAKE_INSTALL_PREFIX="$INSTALLDIR" -G "MinGW Makefiles"
+          cmake .. -DCMAKE_INSTALL_PREFIX="$INSTALLDIR" -DCMAKE_PREFIX_PATH="$KDDIR\dependencies" -G "MinGW Makefiles" -DLIBXML2_INCLUDE_DIR:PATH="$KDDIR/dependencies/libxml2-2.9.3-win32-x86_64/include" -DLIBXML2_LIBRARIES:PATH="$KDDIR/dependencies/libxml2-2.9.3-win32-x86_64/lib"
           mingw32-make
           mingw32-make test
           mingw32-make install
