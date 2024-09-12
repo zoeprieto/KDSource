@@ -82,13 +82,13 @@ jobs:
           7z x libxml2-2.9.3-win32-x86_64.7z -o"libxml2-2.9.3-win32-x86_64" -y
           7z x iconv-1.14-win32-x86_64.7z -o"iconv-1.14-win32-x86_64" -y
           7z x zlib-1.2.8-win32-x86_64.7z -o"zlib-1.2.8-win32-x86_64" -y
-          $export PATH="$KDDIR/dependencies/libxml2-2.9.3-win32-x86_64:$PATH"
-          $export PATH="$KDDIR/dependencies/iconv-1.14-win32-x86_64:$PATH"
-          $export PATH="$KDDIR/dependencies/zlib-1.2.8-win32-x86_64:$PATH"
-          $export C_INCLUDE_PATH="$KDDIR/dependencies/iconv-1.14-win32-x86_64/include"
-          $export C_INCLUDE_PATH="$KDDIR/dependencies/libxml2-2.9.3-win32-x86_64/include"
-          $export C_LIB_PATH="$KDDIR/dependencies/iconv-1.14-win32-x86_64/lib"
-          $export C_LIB_PATH="$KDDIR/dependencies/libxml2-2.9.3-win32-x86_64/lib"
+          $export $PATH="$KDDIR/dependencies/libxml2-2.9.3-win32-x86_64:$PATH"
+          $export $PATH="$KDDIR/dependencies/iconv-1.14-win32-x86_64:$PATH"
+          $export $PATH="$KDDIR/dependencies/zlib-1.2.8-win32-x86_64:$PATH"
+          $export $C_INCLUDE_PATH="$KDDIR/dependencies/iconv-1.14-win32-x86_64/include"
+          $export $C_INCLUDE_PATH="$KDDIR/dependencies/libxml2-2.9.3-win32-x86_64/include"
+          $export $C_LIB_PATH="$KDDIR/dependencies/iconv-1.14-win32-x86_64/lib"
+          $export $C_LIB_PATH="$KDDIR/dependencies/libxml2-2.9.3-win32-x86_64/lib"
           cd ..
           mkdir build
           cd build
