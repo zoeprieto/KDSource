@@ -69,10 +69,10 @@ jobs:
       - name: Install and test C API on Windows
         if: startsWith(matrix.config.name, 'Windows')
         run: |
-          KDDIR=$(pwd)
+          $KDDIR=$(pwd)
           mkdir KDSourceINSTALL
           cd KDSourceINSTALL
-          INSTALLDIR=$(pwd)
+          $INSTALLDIR=$(pwd)
           cd ..
           mkdir dependencies
           cd dependencies
