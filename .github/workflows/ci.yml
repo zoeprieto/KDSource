@@ -48,10 +48,10 @@ jobs:
           export PATH=$PATH:/usr/share/KDSource/bin
           kdtool -h
           kdtool resample -h
-      - name: Install and test C API on MacOS
-        if: startsWith(matrix.config.name, 'MacOS')
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
+      - name: Install and test C API on MacOS
+        if: startsWith(matrix.config.name, 'MacOS')
         run: |
           brew update
           brew install cmake libxml2
