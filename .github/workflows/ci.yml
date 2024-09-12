@@ -48,8 +48,6 @@ jobs:
           export PATH=$PATH:/usr/share/KDSource/bin
           kdtool -h
           kdtool resample -h
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
       - name: Install and test C API on MacOS
         if: startsWith(matrix.config.name, 'MacOS')
         run: |
@@ -66,6 +64,8 @@ jobs:
           export PATH=$PATH:/Users/runner/work/KDSource/KDinstall/bin
           kdtool -h
           kdtool resample -h
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Install and test C API on Windows
         if: startsWith(matrix.config.name, 'Windows')
         run: |
