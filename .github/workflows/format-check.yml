@@ -1,4 +1,4 @@
-name: C++ Format Check
+name: C Format Check
 
 on:
   # allow workflow to be run manually
