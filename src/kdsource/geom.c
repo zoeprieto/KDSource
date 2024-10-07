@@ -158,7 +158,9 @@ int Let_perturb(const Metric* metric, mcpl_particle_t* part, double bw, char ker
 	return 0;
 }
 
-int wl_perturb(const Metric* metric, mcpl_particle_t* part, double bw, char kernel){
+int wl_perturb
+	
+	(const Metric* metric, mcpl_particle_t* part, double bw, char kernel){
 	double wl = 9.045 / sqrt(part->ekin * 1e9);
 	double wl2 = wl + bw*metric->scaling[0] * rand_type(kernel);
 	part->ekin = 81.82e-9 / (wl2 * wl2);
